@@ -1,10 +1,13 @@
 import subprocess
 import time
-
+import janggibase
 
 def get_eval(FEN):
     l = ["eh", "he"]
     L = ["EH", "HE"]
+    b=janggibase.Board(0,FEN)
+    if (b.kings[0].location // 10 == b.kings[1].location // 10 or b.kings[0].location % 10 == b.kings[1].location % 10)and b.piecesBetween(b.kings[0].location, b.kings[1].location) == 0:
+        return '빅장'
     process = subprocess.Popen(
         "stockfish",
         stdin=subprocess.PIPE,
@@ -19,7 +22,6 @@ def get_eval(FEN):
     process.stdin.write("new\n")
     process.stdin.write(f"variant janggi\n")
     process.stdin.write(f"setboard {FEN}\n")
-    process.stdin.flush()
     time.sleep(0.5)
     matein = 0
     check = False
@@ -62,4 +64,5 @@ def get_eval(FEN):
 
 
 if __name__ == "__main__":
-    print(get_eval("6R2/9/1chk3R1/1pp1pepp1/9/9/1PP1P1PP1/1C5C1/4K4/1EHA1AEH1/ b"))
+    #print(get_eval("6R2/9/1chk3R1/1pp1pepp1/9/9/1PP1P1PP1/1C5C1/4K4/1EHA1AEH1/ b")) #M3
+    print(get_eval("rhea1aehr/4k4/1c5c1/p1p2pp1p/9/9/P1P2P1PP/1C5C1/4K4/REHA1AEHR/ b"))
