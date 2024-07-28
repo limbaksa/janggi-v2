@@ -16,13 +16,12 @@ def start_drag(e:ft.DragStartEvent):
     if e.control.piece.color == e.control.board.board.turn and (
             not e.control.board.ai or e.control.piece.color != e.control.board.aiturn
         ):
+            ablelist=[]
             for slot in e.control.board.slots:
                 if e.control.piece.isValidMove(e.control.board.slots.index(slot)):
-                    slot.content = ft.Image(f"img/able.png")
-                    e.control.board.controls.remove(slot)
-                    e.control.board.controls.append(slot)
-                    e.control.update()
-                    slot.update()
+                    ablelist.append(ft.Container(content=ft.Image(f"img/able.png"),left=slot.left,top=slot.top,width=50,height=50))
+            e.control.board.ablelist.extend(ablelist)
+            e.control.board.update(e.control)
 
 
 def bounce_back(board,piece):
@@ -36,9 +35,10 @@ def drag(e: ft.DragUpdateEvent):
    e.control.update()
 
 def drop(e:ft.DragEndEvent):
-    for slot in e.control.board.slots:
-        slot.content=None
-        slot.update()
+    for able in e.control.board.ablelist:
+        e.control.board.controls.remove(able)
+    e.control.board.ablelist=[]
+    e.control.board.update(e.control)
     if e.control.piece.color == e.control.board.board.turn and (
             not e.control.board.ai or e.control.piece.color != e.control.board.aiturn
         ):
@@ -52,6 +52,10 @@ def drop(e:ft.DragEndEvent):
                             e.control.piece.location, e.control.board.slots.index(slot)
                         )
                         if trymove:
+                            e.control.board.moved=[]
+                            e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=e.control.slot.left,top=e.control.slot.top))
+                            e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=slot.left,top=slot.top))
+                            e.control.board.update(e.control)
                             place(e.control,slot)
                             if trymove == -1:
                                 e.control.board.gameOver(
@@ -64,7 +68,6 @@ def drop(e:ft.DragEndEvent):
                                 trymove = e.control.board.board.move(*move)
                                 piece = e.control.board.slots[move[0]].ontop
                                 place(piece,e.control.board.slots[move[1]])
-                                piece.update()
                                 if trymove == -1:
                                     e.control.board.gameOver(
                                         e.control.board.board.isGameOver(e.control.board.board.turn)
@@ -83,11 +86,9 @@ def drop(e:ft.DragEndEvent):
 
 def place(piece,slot):
     piece.slot.ontop = None
+    piece.slot=slot
     piece.top=slot.top
     piece.left=slot.left
-    if slot.ontop:
-        piece.board.controls.remove(slot.ontop)
-        piece.board.piecelist.remove(slot.ontop)
     slot.ontop=piece
     piece.update()
     piece.board.update()
@@ -135,6 +136,8 @@ class janggiBoard(ft.Stack):
         self.slots = []
         self.controls = []
         self.piecelist = []
+        self.ablelist=[]
+        self.moved=[]
         self.width = 450
         self.height = 500
         self.move_start_top=None
@@ -289,8 +292,11 @@ class janggiBoard(ft.Stack):
         if movingPiece is not None:
             self.piecelist.append(movingPiece.piece)
             self.controls.append(movingPiece)
+        self.controls.extend(self.ablelist)
+        self.controls.extend(self.moved)
         if add is not None:
             self.controls.append(add)
+        
         super().update()
 
     def skipTurn(self, e) -> bool:
