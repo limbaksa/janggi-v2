@@ -67,6 +67,10 @@ def drop(e:ft.DragEndEvent):
                                 move = janggibase.Piece.UCIToMove(m)
                                 trymove = e.control.board.board.move(*move)
                                 piece = e.control.board.slots[move[0]].ontop
+                                e.control.board.moved=[]
+                                e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=piece.slot.left,top=piece.slot.top))
+                                e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=e.control.board.slots[move[1]].left,top=e.control.board.slots[move[1]].top))
+                                e.control.board.update(piece)
                                 place(piece,e.control.board.slots[move[1]])
                                 if trymove == -1:
                                     e.control.board.gameOver(
