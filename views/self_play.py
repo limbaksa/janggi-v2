@@ -31,12 +31,11 @@ class self_play:
                 page.update()
 
             reset_button = ft.ElevatedButton(content=ft.Text("대국 초기화"), on_click=reset)
-            board = janggiBoard(self.board)
             turn_skip_button = ft.ElevatedButton(
-                content=ft.Text("한 수 쉼"), on_click=board.skipTurn
+                content=ft.Text("한 수 쉼"), on_click=self.board.skipTurn
             )
             resign_button = ft.ElevatedButton(
-                content=ft.Text("기권"), on_click=board.resign
+                content=ft.Text("기권"), on_click=self.board.resign
             )
             return ft.View(
                 "/self",
@@ -74,7 +73,7 @@ class self_play:
                                 ],
                             ),
                             ft.VerticalDivider(width=1),
-                            board,
+                            self.board,
                             ft.Column(
                                 controls=[
                                     turn_skip_button,
@@ -224,7 +223,7 @@ class self_play:
                     ],
                 )
             else:
-                self.board = Board(self.variant)
+                self.board = janggiBoard(Board(self.variant))
 
                 def nav_change(e):
                     page.go(
@@ -244,12 +243,11 @@ class self_play:
                 reset_button = ft.ElevatedButton(
                     content=ft.Text("대국 초기화"), on_click=reset
                 )
-                board = janggiBoard(self.board)
                 turn_skip_button = ft.ElevatedButton(
-                    content=ft.Text("한 수 쉼"), on_click=board.skipTurn
+                    content=ft.Text("한 수 쉼"), on_click=self.board.skipTurn
                 )
                 resign_button = ft.ElevatedButton(
-                    content=ft.Text("기권"), on_click=board.resign
+                    content=ft.Text("기권"), on_click=self.board.resign
                 )
                 return ft.View(
                     "/self",
@@ -287,7 +285,7 @@ class self_play:
                                     ],
                                 ),
                                 ft.VerticalDivider(width=1),
-                                board,
+                                self.board,
                                 ft.Column(
                                     controls=[
                                         turn_skip_button,

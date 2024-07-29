@@ -33,12 +33,11 @@ class ai_play:
                 page.update()
 
             reset_button = ft.ElevatedButton(content=ft.Text("대국 초기화"), on_click=reset)
-            board = janggiBoard(self.board, ai=True, aiturn=self.aiturn)
             turn_skip_button = ft.ElevatedButton(
-                content=ft.Text("한 수 쉼"), on_click=board.skipTurn
+                content=ft.Text("한 수 쉼"), on_click=self.board.skipTurn
             )
             resign_button = ft.ElevatedButton(
-                content=ft.Text("기권"), on_click=board.resign
+                content=ft.Text("기권"), on_click=self.board.resign
             )
             return ft.View(
                 "/ai",
@@ -76,7 +75,7 @@ class ai_play:
                                 ],
                             ),
                             ft.VerticalDivider(width=1),
-                            board,
+                            self.board,
                             ft.Column(
                                 controls=[
                                     turn_skip_button,
@@ -246,7 +245,7 @@ class ai_play:
                     ],
                 )
             else:
-                self.board = Board(self.variant)
+                self.board = janggiBoard(Board(self.variant), ai=True, aiturn=self.aiturn)
 
                 def reload_page(e):
                     page.update()
@@ -271,16 +270,14 @@ class ai_play:
                 reset_button = ft.ElevatedButton(
                     content=ft.Text("대국 초기화"), on_click=reset
                 )
-                board = janggiBoard(self.board, ai=True, aiturn=self.aiturn)
                 turn_skip_button = ft.ElevatedButton(
-                    content=ft.Text("한 수 쉼"), on_click=board.skipTurn
+                    content=ft.Text("한 수 쉼"), on_click=self.board.skipTurn
                 )
                 resign_button = ft.ElevatedButton(
-                    content=ft.Text("기권"), on_click=board.resign
+                    content=ft.Text("기권"), on_click=self.board.resign
                 )
                 if self.aiturn == 0:
-                    board.AI_firstmove()
-                    self.board = board.board
+                    self.board.AI_firstmove()
                     reload_page(None)
 
                 return ft.View(
@@ -319,7 +316,7 @@ class ai_play:
                                     ],
                                 ),
                                 ft.VerticalDivider(width=1),
-                                board,
+                                self.board,
                                 ft.Column(
                                     controls=[
                                         turn_skip_button,

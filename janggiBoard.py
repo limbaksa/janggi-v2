@@ -53,8 +53,20 @@ def drop(e:ft.DragEndEvent):
                         )
                         if trymove:
                             e.control.board.moved=[]
-                            e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=e.control.slot.left,top=e.control.slot.top))
-                            e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=slot.left,top=slot.top))
+                            e.control.board.moved.append(
+                                ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                opacity=0.2,
+                                width=50,
+                                height=50,
+                                left=slot.left,
+                                top=slot.top))
+                            e.control.board.moved.append(
+                                ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                opacity=0.2,
+                                width=50,
+                                height=50,
+                                left=e.control.slot.left,
+                                top=e.control.slot.top))
                             e.control.board.update(e.control)
                             place(e.control,slot)
                             if trymove == -1:
@@ -68,8 +80,21 @@ def drop(e:ft.DragEndEvent):
                                 trymove = e.control.board.board.move(*move)
                                 piece = e.control.board.slots[move[0]].ontop
                                 e.control.board.moved=[]
-                                e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=piece.slot.left,top=piece.slot.top))
-                                e.control.board.moved.append(ft.Container(bgcolor=ft.colors.LIGHT_BLUE,opacity=0.2,width=50,height=50,left=e.control.board.slots[move[1]].left,top=e.control.board.slots[move[1]].top))
+                                e.control.board.moved.append(
+                                    ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                                 opacity=0.2,
+                                                 width=50,
+                                                 height=50,
+                                                 left=piece.slot.left,
+                                                 top=piece.slot.top))
+                                
+                                e.control.board.moved.append(
+                                    ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                                 opacity=0.2,
+                                                 width=50,
+                                                 height=50,
+                                                 left=e.control.board.slots[move[1]].left,
+                                                 top=e.control.board.slots[move[1]].top))
                                 e.control.board.update(piece)
                                 place(piece,e.control.board.slots[move[1]])
                                 if trymove == -1:
@@ -94,8 +119,8 @@ def place(piece,slot):
     piece.top=slot.top
     piece.left=slot.left
     slot.ontop=piece
-    piece.update()
-    piece.board.update()
+    if len(piece.board.controls):
+        piece.board.update()
 
 
 class janggiPiece(ft.GestureDetector):
@@ -148,6 +173,12 @@ class janggiBoard(ft.Stack):
         self.move_start_left=None
         self.ai = AI(self.board, aiturn) if ai else None
         self.aiturn = aiturn
+        for i in range(90):
+            self.slots.append(Slot(50 * (9 - i % 10), 50 * (i // 10)))
+        for color in range(2):
+            for piece in self.board.pieces[color]:
+                self.piecelist.append(janggiPiece(piece, self))
+
     def did_mount(self):
         cp = cv.Canvas(
             [
@@ -211,13 +242,9 @@ class janggiBoard(ft.Stack):
             expand=True,
         )
         self.controls.append(cp)
-        for i in range(90):
-            self.slots.append(Slot(50 * (9 - i % 10), 50 * (i // 10)))
-        for color in range(2):
-            for piece in self.board.pieces[color]:
-                self.piecelist.append(janggiPiece(piece, self))
         self.controls.extend(self.slots)
         self.controls.extend(self.piecelist)
+        self.controls.extend(self.moved)
         self.update()
         return super().did_mount()
     
@@ -394,7 +421,23 @@ class janggiBoard(ft.Stack):
         move = janggibase.Piece.UCIToMove(m)
         self.board.move(*move)
         piece = self.slots[move[0]].ontop
-        piece.place(self.slots[move[1]])
+        self.moved=[]
+        self.moved.append(
+            ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                         opacity=0.2,
+                         width=50,
+                         height=50,
+                         left=piece.slot.left,
+                         top=piece.slot.top))
+        
+        self.moved.append(
+            ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                         opacity=0.2,
+                         width=50,
+                         height=50,
+                         left=self.slots[move[1]].left,
+                         top=self.slots[move[1]].top))
+        place(piece,self.slots[move[1]])
     
 
 if __name__ == "__main__":
