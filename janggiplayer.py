@@ -4,7 +4,7 @@ import time
 
 
 class AI:
-    def __init__(self, board: janggibase.Board, color: int):
+    def __init__(self, board: janggibase.Board, color: int,skill: int):
         self.board = board
         self.color = color
         l = ["eh", "he"]
@@ -20,6 +20,7 @@ class AI:
         self.process.stdin.write("option EvalFile=janggi-4d3de2fee245.nnue\n")
         self.process.stdin.write("option Use NNUE=1\n")
         self.process.stdin.write("option VariantPath=variants.ini\n")
+        self.process.stdin.write(f"option Skill Level={skill}\n")
         self.process.stdin.flush()
         self.process.stdin.write("new\n")
         self.process.stdin.write(
@@ -50,3 +51,5 @@ class AI:
             line = self.process.stdout.readline()
             if line.startswith("move"):
                 return line.split()[1]
+
+# Skill level 20: Master, 10: hard, 0: Intermediate, -10: Easy, -20: Beginner

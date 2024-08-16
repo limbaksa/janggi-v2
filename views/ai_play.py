@@ -12,6 +12,7 @@ class ai_play:
         self.board = None
         self.variant = -1
         self.aiturn = -1
+        self.difficulty=-1
 
     def view(self, page: ft.Page, params: Params, basket: Basket):
         if self.board is not None:
@@ -29,6 +30,7 @@ class ai_play:
                 self.board = None
                 self.variant = -1
                 self.aiturn = -1
+                self.difficulty=-1
                 page.go("/re/ai")
                 page.update()
 
@@ -152,6 +154,31 @@ class ai_play:
                     page.update()
                     self.aiturn = 0
 
+                def set_difficulty_beginner(e):
+                    dlg3.open = False
+                    page.update()
+                    self.difficulty=-20
+                
+                def set_difficulty_easy(e):
+                    dlg3.open = False
+                    page.update()
+                    self.difficulty=-10
+                
+                def set_difficulty_intermediate(e):
+                    dlg3.open = False
+                    page.update()
+                    self.difficulty=0
+                
+                def set_difficulty_hard(e):
+                    dlg3.open = False
+                    page.update()
+                    self.difficulty=10
+
+                def set_difficulty_master(e):
+                    dlg3.open = False
+                    page.update()
+                    self.difficulty=20
+
                 turndlg = ft.AlertDialog(
                     modal=True,
                     title=ft.Text("초/한 중 플레이할 진영을 선택해주세요."),
@@ -183,7 +210,19 @@ class ai_play:
                     ],
                 )
                 dlg2.open = True
+                dlg3 = ft.AlertDialog(
+                    modal=True,
+                    title=ft.Text("AI 난이도를 선택해주세요."),
+                    actions=[
+                        ft.TextButton("초보", on_click=set_difficulty_beginner),
+                        ft.TextButton("쉬움", on_click=set_difficulty_easy),
+                        ft.TextButton("보통", on_click=set_difficulty_intermediate),
+                        ft.TextButton("어려움", on_click=set_difficulty_hard),
+                        ft.TextButton("고수", on_click=set_difficulty_master),
+                    ],
 
+                )
+                dlg3.open = True
                 def reload_page(e):
                     page.go("/re/ai")
                     page.update()
@@ -224,6 +263,7 @@ class ai_play:
                                     ],
                                 ),
                                 ft.VerticalDivider(width=1),
+                                dlg3,
                                 dlg2,
                                 dlg,
                                 turndlg,
@@ -245,7 +285,7 @@ class ai_play:
                     ],
                 )
             else:
-                self.board = janggiBoard(Board(self.variant), ai=True, aiturn=self.aiturn)
+                self.board = janggiBoard(Board(self.variant), ai=True, aiturn=self.aiturn,aiskill=self.difficulty)
 
                 def reload_page(e):
                     page.update()

@@ -158,7 +158,7 @@ class Slot(ft.Container):
 
 
 class janggiBoard(ft.Stack):
-    def __init__(self, board: janggibase.Board, ai=False, aiturn=None):
+    def __init__(self, board: janggibase.Board, ai=False, aiturn=None,aiskill=None):
         super().__init__()
         
         self.board = board
@@ -171,7 +171,7 @@ class janggiBoard(ft.Stack):
         self.height = 500
         self.move_start_top=None
         self.move_start_left=None
-        self.ai = AI(self.board, aiturn) if ai else None
+        self.ai = AI(self.board, aiturn,aiskill) if ai else None
         self.aiturn = aiturn
         for i in range(90):
             self.slots.append(Slot(50 * (9 - i % 10), 50 * (i // 10)))
