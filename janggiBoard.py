@@ -77,26 +77,29 @@ def drop(e:ft.DragEndEvent):
                             if e.control.board.ai:
                                 m = e.control.board.ai.getMove()
                                 move = janggibase.Piece.UCIToMove(m)
+                                e.control.board.moved=[]
                                 trymove = e.control.board.board.move(*move)
                                 piece = e.control.board.slots[move[0]].ontop
-                                e.control.board.moved=[]
-                                e.control.board.moved.append(
-                                    ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
-                                                 opacity=0.2,
-                                                 width=50,
-                                                 height=50,
-                                                 left=piece.slot.left,
-                                                 top=piece.slot.top))
-                                
-                                e.control.board.moved.append(
-                                    ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
-                                                 opacity=0.2,
-                                                 width=50,
-                                                 height=50,
-                                                 left=e.control.board.slots[move[1]].left,
-                                                 top=e.control.board.slots[move[1]].top))
-                                e.control.board.update(piece)
-                                place(piece,e.control.board.slots[move[1]])
+                                if m!='@@@@':
+                                    e.control.board.moved.append(
+                                        ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                                     opacity=0.2,
+                                                     width=50,
+                                                     height=50,
+                                                     left=piece.slot.left,
+                                                     top=piece.slot.top))
+
+                                    e.control.board.moved.append(
+                                        ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                                     opacity=0.2,
+                                                     width=50,
+                                                     height=50,
+                                                     left=e.control.board.slots[move[1]].left,
+                                                     top=e.control.board.slots[move[1]].top))
+                                    e.control.board.update(piece)
+                                    place(piece,e.control.board.slots[move[1]])
+                                else:
+                                    e.control.board.update()
                                 if trymove == -1:
                                     e.control.board.gameOver(
                                         e.control.board.board.isGameOver(e.control.board.board.turn)
@@ -345,13 +348,29 @@ class janggiBoard(ft.Stack):
             if trymove:
                 if trymove == -1:
                     self.gameOver(self.board.isGameOver(self.board.turn))
-    
+                self.moved=[]
+                self.update()
                 if self.ai:
                     m = self.ai.getMove()
                     move = janggibase.Piece.UCIToMove(m)
                     trymove = self.board.move(*move)
                     piece = self.slots[move[0]].ontop
-                    piece.place(self.slots[move[1]])
+                    self.moved.append(
+                        ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                     opacity=0.2,
+                                     width=50,
+                                     height=50,
+                                     left=piece.slot.left,
+                                     top=piece.slot.top))
+
+                    self.moved.append(
+                        ft.Container(bgcolor=ft.colors.LIGHT_BLUE,
+                                     opacity=0.2,
+                                     width=50,
+                                     height=50,
+                                     left=self.slots[move[1]].left,
+                                     top=self.slots[move[1]].top))
+                    place(piece,self.slots[move[1]])
                     piece.update()
                     if trymove == -1:
                         self.gameOver(self.board.isGameOver(self.board.turn))
